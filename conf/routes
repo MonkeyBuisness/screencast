@@ -1,3 +1,4 @@
 GET   /                   App.Index
 GET   /ping               App.Ping
 GET   /public/*filepath   Static.Serve("public")
+WS    /mirror             App.Mirror

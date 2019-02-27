@@ -2,3 +2,56 @@
     margin: 0;
     padding: 0;
 }
+
+html, body {
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	background: #1B1D39;
+}
+
+#container {
+	width: 800px;
+	height: 600px;
+	background: #1D3162;
+	text-align: center;
+	position: fixed;
+	box-sizing: border-box;
+  	top: 50%;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+  	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+#screen {
+	width: 100%;
+	height: auto;
+	box-sizing: border-box;
+	top: 50%;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+  	position: absolute;
+}
+
+#panel {
+	height: 36px;
+	width: 100%;
+	box-sizing: border-box;
+	background: rgba(128,128,128,.2);
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	display: none;
+	padding: 6px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+#full-screen-btn {
+	height: 24px;
+	width: 24px;
+	float: right;
+	background: url('/public/img/fullscreen.png') no-repeat;
+	background-position: center center;
+	cursor: pointer;
+	background-size: 100% 100% !important;
+}

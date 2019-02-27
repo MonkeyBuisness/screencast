@@ -1,21 +1,27 @@
-{{set . "title" "ScreenCast"}}
-{{template "header.html" .}}
+<!DOCTYPE html>
 
-<header class="jumbotron" style="background-color:#A9F16C">
-  <div class="container">
-    <div class="row">
-      <h1>It works!</h1>
-      <p></p>
+<html>
+<head>
+    <title>Screencast mirror</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/public/css/main.css" />
+    <link rel="shortcut icon" type="image/png" href="/public/img/favicon.png" />
+    <script type="text/javascript">
+        function socketAddress() {
+            return '{{ socket_addr }}';
+        }
+    </script>
+    <script src="/public/js/jquery-2.2.4.min.js"></script>
+    <script src="/public/js/jquery.simple.websocket.js"></script>
+    <script src="/public/js/screen.js"></script>
+</head>
+<body>
+    <div id="container">
+        <img id="screen" />
+        <div id="panel">
+            <div id="full-screen-btn"></div>
+        </div>
     </div>
-  </div>
-</header>
-
-<div class="container">
-  <div class="row">
-    <div class="span6">
-      {{template "flash.html" .}}
-    </div>
-  </div>
-</div>
-
-{{template "footer.html" .}}
+</body>
+</html>
