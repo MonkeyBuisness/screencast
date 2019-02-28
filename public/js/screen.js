@@ -24,10 +24,14 @@ $(document).ready(function() {
 	screen = $('#screen');
 	screen.dblclick(toggleFullscreen);
 
+	var wsAddress = 'ws://' + location.host + ':' + location.port + '/mirror';
+
 	// connect to websocket
 	webSocket = $.simpleWebSocket({
-		url: socketAddress(),
-		dataType: 'arraybuffer'
+		url: wsAddress,
+		dataType: 'arraybuffer',
+		timeout: 5000,
+		attempts: 60
 	});
 
 	// start listening

@@ -3,22 +3,28 @@ package main
 import (
 	"bufio"
 	"flag"
-	//"fmt"
-	//"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	//"strings"
+	"strconv"
+)
+
+const (
+	osCastAddress = "SCREENCAST_ADDRESS"
+	osCastPort    = "SCREENCAST_PORT"
 )
 
 func main() {
+	// define flags
 	port := flag.Int("port", 8080, "defines cast port")
 	address := flag.String("addr", "localhost", "defines cast net address")
 	quality := flag.Int("q", 40, "defines image quality")
 	bitrate := flag.Int("br", 20, "defines cast bitrate")
 
+	// parse flags
 	flag.Parse()
 
 	log.Println("Starting screencast...")
@@ -26,6 +32,7 @@ func main() {
 	log.Println("Quality: ", *quality)
 	log.Println("Bitrate: ", *bitrate)
 
+	// check file to run script
 	var file string
 	switch runtime.GOOS {
 	case "windows":
@@ -36,48 +43,57 @@ func main() {
 		file = "./run.sh"
 	}
 
+	// get absolute path to run script
 	absPath, err := filepath.Abs(file)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	///
-	os.Setenv("hello", "world!!!!")
-	///
+	// set system variables
+	os.Setenv(osCastAddress, *address)
+	os.Setenv(osCastPort, strconv.Itoa(*port))
 
-	cmd := exec.Command("/bin/bash", absPath, "77")
+	// create command to start script
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command(absPath, strconv.Itoa(*quality), strconv.Itoa(*bitrate))
+	case "linux":
+		fallthrough
+	default:
+		cmd = exec.Command("/bin/bash", absPath, strconv.Itoa(*quality), strconv.Itoa(*bitrate))
+	}
+
+	// create stdout reader pipe
 	cmdReader, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(err)
 	}
-	scanner := bufio.NewScanner(cmdReader)
-	go func() {
-		for scanner.Scan() {
-			log.Println(scanner.Text())
-		}
-	}()
+
+	// create stderr reader pipe
+	cmdErrReader, err := cmd.StderrPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// start pipes listener
+	go listen(cmdReader)
+	go listen(cmdErrReader)
+
+	// start command pipe
 	if err = cmd.Start(); err != nil {
 		log.Fatal(err)
 	}
+
+	// wait command to finished
 	if err = cmd.Wait(); err != nil {
 		log.Fatal(err)
 	}
+}
 
-	/*var stdout bytes.Buffer
-	var stderr bytes.Buffer
-	cmd := exec.Command("/bin/bash", absPath)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
+func listen(reader io.ReadCloser) {
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		log.Println(scanner.Text())
 	}
-
-	if stdout.Len() > 0 {
-		log.Println(string(stdout.Bytes()))
-	}
-
-	if stderr.Len() > 0 {
-		log.Fatal(string(stderr.Bytes()))
-	}*/
 }

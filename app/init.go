@@ -4,8 +4,6 @@ import (
 	"flag"
 	"github.com/MonkeyBuisness/screencast/app/service"
 	"github.com/revel/revel"
-	"log"
-	"os"
 )
 
 var (
@@ -16,7 +14,8 @@ var (
 	BuildTime string
 
 	// flags
-	port = flag.Int("p", 9000, "usage port")
+	quality = flag.Int("q", 40, "usage quality")
+	bitrate = flag.Int("br", 20, "usage bitrate")
 )
 
 func init() {
@@ -63,18 +62,11 @@ var CORSFilter = func(c *revel.Controller, fc []revel.Filter) {
 func StartupScript() {
 	// parse flags
 	flag.Parse()
-	log.Println(*port)
-	log.Println(os.Getenv("hello"))
-
-	// register template functions
-	revel.TemplateFuncs["socket_addr"] = func() string {
-		return "ws://dc7b5834.ngrok.io/mirror"
-	}
 
 	// start screencast service
 	service.StartScreencast(service.ScreenCastConfig{
-		BitRate: 14,
-		Quality: 37,
+		BitRate: *bitrate,
+		Quality: *quality,
 	})
 }
 

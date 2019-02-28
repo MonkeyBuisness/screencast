@@ -2,7 +2,6 @@ package service
 
 import (
 	"bytes"
-	//"encoding/base64"
 	"github.com/kbinani/screenshot"
 	"image/jpeg"
 	"log"
@@ -44,20 +43,18 @@ func StopScreencast() {
 func screenCapture(config ScreenCastConfig) {
 	bounds := screenshot.GetDisplayBounds(0)
 	rate := time.Millisecond * time.Duration(millisInSecond/config.BitRate)
-
-	log.Printf("Service succesfully started at: %d\n", config.BitRate)
+	jpegOptions := &jpeg.Options{Quality: config.Quality}
 
 	for {
 		if img, err := screenshot.CaptureRect(bounds); err != nil {
 			log.Println(err)
 		} else {
-			// decode to base64 string
+			// encode to jpeg image
 			buf := new(bytes.Buffer)
-			if err := jpeg.Encode(buf, img, &jpeg.Options{Quality: config.Quality}); err != nil {
+			if err := jpeg.Encode(buf, img, jpegOptions); err != nil {
 				log.Println(err)
 			} else {
 				if listener != nil {
-					//s := base64.RawStdEncoding.EncodeToString(buf.Bytes())
 					listener.NewScreenshot(buf.Bytes())
 				}
 			}
